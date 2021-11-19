@@ -13,24 +13,54 @@ router.get('/', (req, res) => {
     }
   })
     .then(dbCatData => {
-    if(!dbCatData) {
-      res.status(404).json({message: 'No Categories Found'});
-      return;
+      if(!dbCatData) {
+        res.status(404).json({message: 'No Categories Found'});
+        return;
     }
     res.json(dbCatData);
-  }).catch(err => {
-    console.log(err);
-    res.status(500).json(err)
+  })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err)
   });
 });
 
 router.get('/:id', (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
+  Category.findOne({
+    where: {
+      id: req.params.id
+    },
+    include: {
+      model: Product,
+      attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
+    }
+  })
+    .then(dbCatData => {
+      if(!dbCatData) {
+        res.status(404).json({message: 'No Categories Found'});
+        return;
+    }
+    res.json(dbCatData);
+  })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err)
+  });
 });
+
 
 router.post('/', (req, res) => {
   // create a new category
+  Category.create({
+    category_name: req.body.category_name
+  })
+    .then(dbCatData => res.json(dbCatData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    })
 });
 
 router.put('/:id', (req, res) => {
