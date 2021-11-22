@@ -62,13 +62,13 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   // update a tag's name by its `id` value
-  Tag.update({
+  Tag.update(req.body, {
     where: {
       id: req.params.id
     }
   })
     .then(dbTagData => {
-      if (!dbTagData[0]) {
+      if (!dbTagData) {
         res.status(404).json({ message: 'No Tag Found With This ID'});
         return;
       }
@@ -82,7 +82,7 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   // delete on tag by its `id` value
-  Tag.describe({
+  Tag.destroy({
     where: {
       id: req.params.id
     }
@@ -94,7 +94,7 @@ router.delete('/:id', (req, res) => {
       }
       res.json(dbTagData);
     })
-      .catch(er => {
+      .catch(err => {
         console.log(err);
         res.status(500).json(err);
     });
